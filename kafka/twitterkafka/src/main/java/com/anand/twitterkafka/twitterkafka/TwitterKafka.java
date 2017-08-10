@@ -14,10 +14,10 @@ public class TwitterKafka
 	    LinkedBlockingQueue<Status> queue = new LinkedBlockingQueue<Status>(1000);
 	      
 	      
-	    String consumerKey = "HydpsmDKyoNsQPUhnIzQJtoqo";
-	    String consumerSecret = "Z6gjtEQBAlMZLrI52xuTgelAwCeEUchmVkep1RnHuyLImCGJkd";
-	    String accessToken = "765955622688944128-QdC5BTC1GI74NQPx7wJkZidfzfjacc1";
-	    String accessTokenSecret = "xou5zVMfJXGgfs7qOUplH0peyPi0IRLcI9I0oFOU2IQC8";
+	    String consumerKey = "";
+	    String consumerSecret = "";
+	    String accessToken = "";
+	    String accessTokenSecret = "";
 	    String topicName = "twitter_topic";
 //	    String[] arguments = args.clone();
 //	    String[] keyWords = Arrays.copyOfRange(arguments, 5, arguments.length);
