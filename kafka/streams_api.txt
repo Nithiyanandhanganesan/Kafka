@@ -1,0 +1,1 @@
+Kafka Streams is a library for building streaming applications, specifically applications that transform input Kafka topics into output Kafka topics.

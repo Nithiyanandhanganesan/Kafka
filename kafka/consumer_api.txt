@@ -1,0 +1,44 @@
+Producers write to the tail of these logs and consumers read the logs at their own pace. Kafka scales topic consumption by distributing partitions 
+among a consumer group, which is a set of consumers sharing a common group identifier.
+
+
+While the old consumer depended on Zookeeper for group management, the new consumer uses a group coordination protocol built into Kafka itself. 
+For each group, one of the brokers is selected as the group coordinator. The coordinator is responsible for managing the state of the group. 
+Its main job is to mediate partition assignment when new members arrive, old members depart, and when topic metadata changes. 
+The act of reassigning partitions is known as rebalancing the group.
+
+<dependency>
+ <groupId>org.apache.kafka</groupId>
+ <artifactId>kafka-clients</artifactId>
+ <version>0.11.0.0-cp1</version>
+</dependency>
+
+Properties props = new Properties();
+props.put("bootstrap.servers", "localhost:9092");
+props.put("group.id", "consumer-tutorial");
+props.put("key.deserializer", StringDeserializer.class.getName());
+props.put("value.deserializer", StringDeserializer.class.getName());
+KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props); 
+
+
+consumer.subscribe(Arrays.asList(“foo”, “bar”));   => topic subscription
+
+Poll loop:
+========
+
+try {
+  while (running) {
+    ConsumerRecords<String, String> records = consumer.poll(1000);
+    for (ConsumerRecord<String, String> record : records)
+      System.out.println(record.offset() + ": " + record.value());
+  }
+} finally {
+  consumer.close();
+}
+
+
+The poll API returns fetched records based on the current position. When the group is first created, the position will be set according to the reset policy.
+The parameter passed to poll controls the maximum amount of time that the consumer will block while it awaits records at the current position. 
+The consumer returns immediately as soon as any records are available, but it will wait for the full timeout specified before returning if nothing is available.
+
+

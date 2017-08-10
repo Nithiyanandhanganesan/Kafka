@@ -1,0 +1,32 @@
+KafkaProducer class provides send method to send messages asynchronously to a topic. 
+
+public void send(KeyedMessaget<k,v> message)  - sends the data to a single topic,par-titioned by key using either sync or async producer.
+public void send(List<KeyedMessage<k,v>>messages) - sends data to multiple topics.
+
+KafkaProducer class provides a flush method to ensure all previously sent messages have been actually completed. Syntax of the flush method is as follows -
+public void flush()
+
+public Map metrics()
+It returns the map of internal metrics maintained by the producer.
+
+public void close() - 
+KafkaProducer class provides close method blocks until all previously sent requests are completed.
+
+
+ProducerRecord API:
+===================
+
+public ProducerRecord (string topic, int partition, k key, v value)
+
+Topic - user defined topic name that will appended to record.
+Partition - partition count
+Key - The key that will be included in the record.
+Value - Record contents
+
+public string topic()	Topic will append to the record.
+
+public K key()		Key that will be included in the record. If no such key, null will be re-turned here.
+	
+public V value()	Record contents.
+
+partition()		Partition count for the record

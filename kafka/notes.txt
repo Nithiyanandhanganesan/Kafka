@@ -1,0 +1,143 @@
+Apache Kafka™ is a distributed streaming platform.
+
+It lets you publish and subscribe to streams of records. In this respect it is similar to a message queue or enterprise messaging system.
+It lets you store streams of records in a fault-tolerant way.
+It lets you process streams of records as they occur.
+
+Building real-time streaming data pipelines that reliably get data between systems or applications
+Building real-time streaming applications that transform or react to the streams of data
+
+Kafka is run as a cluster on one or more servers.
+The Kafka cluster stores streams of records in categories called topics.
+Each record consists of a key, a value, and a timestamp.
+
+Topics and Logs:
+==================
+
+A topic is a category or feed name to which records are published. Topics in Kafka are always multi-subscriber.
+
+Each partition is an ordered, immutable sequence of records that is continually appended to—a structured commit log. 
+The records in the partitions are each assigned a sequential id number called the offset that uniquely identifies each record within the partition.
+
+partition 0  [0,1,2,3,4,5,6,7] <- offsets
+partition 1  [0,1,2,3,4,5,6,7]
+partition 2  [0,1,2,3,4,5,6,7]
+
+The Kafka cluster retains all published records—whether or not they have been consumed—using a configurable retention period.
+offset is controlled by the consumer.
+consumer can reset to an older offset to reprocess data from the past or skip ahead to the most recent record and start consuming from "now".
+
+Partitions:
+===============
+
+The partitions in the log serve several purposes. First, they allow the log to scale beyond a size that will fit on a single server. 
+Each individual partition must fit on the servers that host it, but a topic may have many partitions so it can handle an arbitrary amount of data. 
+Second they act as the unit of parallelism—more on that in a bit.
+
+Each partition has one server which acts as the "leader" and zero or more servers which act as "followers". 
+The leader handles all read and write requests for the partition while the followers passively replicate the leader. 
+If the leader fails, one of the followers will automatically become the new leader.
+Each partition is replicated across a configurable number of servers for fault tolerance.
+
+Producer:
+=============
+
+The producer is responsible for choosing which record to assign to which partition within the topic. 
+This can be done in a round-robin fashion simply to balance load or it can be done according to some semantic partition function.
+
+Broker:
+============
+
+Each node in the cluster is called a Kafka broker.
+
+Consumers:
+=============
+
+Consumers label themselves with a consumer group name, and each record published to a topic is delivered to one consumer instance within each subscribing consumer group. 
+
+A two server Kafka cluster hosting four partitions (P0-P3) with two consumer groups. Consumer group A has two consumer instances and group B has four.
+The way consumption is implemented in Kafka is by dividing up the partitions in the log over the consumer instances 
+so that each instance is the exclusive consumer of a "fair share" of partitions at any point in time. 
+
+Kafka only provides a total order over records within a partition, not between different partitions in a topic. 
+Per-partition ordering combined with the ability to partition data by key is sufficient for most applications. 
+However, if you require a total order over records this can be achieved with a topic that has only one partition, 
+though this will mean only one consumer process per consumer group.
+
+At any point only one consumer instance in one consumer group can read the specific partition.
+
+Messages sent by a producer to a particular topic partition will be appended in the order they are sent. 
+That is, if a record M1 is sent by the same producer as a record M2, and M1 is sent first, then M1 will have a lower offset than M2 and appear earlier in the log.
+
+Storage:
+==============
+
+Data written to Kafka is written to disk and replicated for fault-tolerance. 
+Kafka allows producers to wait on acknowledgement so that a write isn't considered complete until it is fully replicated and guaranteed to persist even 
+if the server written to fails.
+
+Kafka for Stream Processing[kafka streams]:
+=============================================
+
+In Kafka a stream processor is anything that takes continual streams of data from input topics, performs some processing on this input, 
+and produces continual streams of data to output topics.
+
+It is possible to do simple processing directly using the producer and consumer APIs. 
+However for more complex transformations Kafka provides a fully integrated Streams API. 
+This allows building applications that do non-trivial processing that compute aggregations off of streams or join streams together.
+
+
+Data Import/Export:
+======================
+
+Kafka Connect is a tool included with Kafka that imports and exports data to Kafka.
+start two connectors running in standalone mode, which means they run in a single, local, dedicated process. 
+We provide three configuration files as parameters. 
+The first is always the configuration for the Kafka Connect process, containing common configuration such as the Kafka brokers to connect to 
+and the serialization format for data. The remaining configuration files each specify a connector to create. 
+These files include a unique connector name, the connector class to instantiate, and any other configuration required by the connector.
+
+bin/connect-standalone.sh config/connect-standalone.properties config/connect-file-source.properties config/connect-file-sink.properties
+
+
+These sample configuration files, included with Kafka, use the default local cluster configuration you started earlier and create two connectors: the first is a source connector that reads lines from an input file and produces each to a Kafka topic and the second is a sink connector that reads messages from a Kafka topic and produces each as a line in an output file.
+
+During startup you'll see a number of log messages, including some indicating that the connectors are being instantiated. 
+Once the Kafka Connect process has started, the source connector should start reading lines from test.txt and producing them to the topic connect-test, 
+and the sink connector should start reading messages from the topic connect-test and write them to the file test.sink.txt. 
+We can verify the data has been delivered through the entire pipeline by examining the contents of the output file.
+
+The connectors continue to process data, so we can add data to the file and see it move through the pipeline.
+
+
+
+API'S:
+========================
+
+Kafka has four core APIs:
+
+The Producer API allows an application to publish a stream of records to one or more Kafka topics.
+The Consumer API allows an application to subscribe to one or more topics and process the stream of records produced to them.
+The Streams API allows an application to act as a stream processor, consuming an input stream from one or more topics and producing an output stream 
+to one or more output topics, effectively transforming the input streams to output streams.
+The Connector API allows building and running reusable producers or consumers that connect Kafka topics to existing applications or data systems. 
+For example, a connector to a relational database might capture every change to a table.
+
+Producer API:
+------------------
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+

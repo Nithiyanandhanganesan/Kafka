@@ -1,0 +1,56 @@
+wget http://www-eu.apache.org/dist/kafka/0.11.0.0/kafka_2.11-0.11.0.0.tgz
+tar -xzf kafka_2.11-0.11.0.0.tgz
+
+./bin/zookeeper-server-start.sh config/zookeeper.properties   [ start the zookeeper ]
+./bin/kafka-server-start.sh config/server.properties          [ start kafka server  ]
+
+./bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic test       [ create topic ]
+./bin/kafka-topics.sh --list --zookeeper localhost:2181                                                            [ see the list of topic available ]
+
+
+bin/kafka-console-producer.sh --broker-list localhost:9092 --topic test                              [start the producer , broker-list refers which node act as kafka cluster/node ]
+
+bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test --from-beginning        [start the consumer , bootstrap-server  refers which node run consumer instance]
+
+
+add the below line in  config/server.properties to fix LEADER NOT FOUND ISSUE:
+port = 9092
+advertised.host.name = localhost
+
+Setting up a multi-broker cluster:
+===================================
+
+For Kafka, a single broker is just a cluster of size one, so nothing much changes other than starting a few more broker instances. 
+But just to get feel for it, let's expand our cluster to three nodes(still all on our local machine).
+
+> cp config/server.properties config/server-1.properties
+> cp config/server.properties config/server-2.properties
+
+config/server-1.properties:
+    broker.id=1
+    listeners=PLAINTEXT://:9093
+    log.dir=/tmp/kafka-logs-1
+ 
+config/server-2.properties:
+    broker.id=2
+    listeners=PLAINTEXT://:9094
+    log.dir=/tmp/kafka-logs-2
+
+
+The broker.id property is the unique and permanent name of each node in the cluster. We have to override the port and log directory only 
+because we are running these all on the same machine and we want to keep the brokers from all trying to register 
+on the same port or overwrite each other's data.
+
+> bin/kafka-server-start.sh config/server-1.properties &
+> bin/kafka-server-start.sh config/server-2.properties &
+
+bin/kafka-topics.sh --describe --zookeeper localhost:2181 --topic my-replicated-topic      [ see the status of the topic ]
+
+
+
+Import/Export Data:
+=======================
+
+
+
+

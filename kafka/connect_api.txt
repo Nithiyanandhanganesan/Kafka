@@ -1,0 +1,37 @@
+kafka_2.11-0.10.0.0\config\connect-file-source.properties:
+============================================================
+ 
+name=local-file-source
+connector.class=FileStreamSource
+tasks.max=1
+file=test.txt
+topic=connect-test
+
+kafka_2.11-0.10.0.0\config\connect-file-sink.properties:
+=======================================================
+
+name=local-file-sink
+connector.class=FileStreamSink
+tasks.max=1
+file=test.sink.txt
+topics=connect-test
+
+
+kafka_2.11-0.10.0.0\config\connect-standalone.properties :
+==========================================================
+
+bootstrap.servers=localhost:9092
+key.converter=org.apache.kafka.connect.json.JsonConverter
+value.converter=org.apache.kafka.connect.json.JsonConverter
+key.converter.schemas.enable=true
+value.converter.schemas.enable=true
+
+
+./bin/connect-standalone.sh config/connect-standalone.properties config/connect-file-source.properties config/connect-file-sink.properties
+
+echo 'hello' >> test.txt
+echo 'halo' >> test.txt
+echo 'salut' >> test.txt
+
+./bin/kafka-console-consumer.sh  --zookeeper localhost:2181 --from-beginning --topic connect-test
+ 

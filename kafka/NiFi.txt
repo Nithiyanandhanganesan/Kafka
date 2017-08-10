@@ -1,0 +1,13 @@
+Best alternative to Kafka connect is Nifi.
+Kafka connect is used to connect to external datastore and submit the data to producer.
+Nifi does the same. It connects to external datastore and gives the data to kafka producer. But Nifi has some advanced feature.
+
+NIFI has a very extensible framework, allowing any developers/users to add a data source connector quite easily. 
+In the previous release, NIFI 1.0, we had 170+ processors bundled with the application by default, including the twitter processor.
+
+NiFi has a concept called expression language which is supported on a per-property basis, meaning the developer of a processor can choose whether a property 
+supports expression language. NiFi’s expression language is documented here: https://nifi.apache.org/docs/nifi-docs/html/expression-language-guide.html
+
+NiFi is implemented in the Java programming language and allows extensions (processors, controller services, and reporting tasks) to be implemented in Java. 
+In addition, NiFi supports processors that execute scripts written in Groovy, Jython, and several other popular scripting languages.
+
