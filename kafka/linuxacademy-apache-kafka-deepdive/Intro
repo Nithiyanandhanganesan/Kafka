@@ -1,0 +1,155 @@
+Basics:
+=========
+
+- Its messaging system.
+- Producer ->  Produce the messages
+- Consumer -> consume the messages
+- Streams  -> Producing messaging to the output Streams
+- Connector-> connecting topic to existing application.
+- kafka is written in Java
+- created by linkedin. 2011 became open source tool.
+
+Messages & Schemas:
+====================
+
+-> atleast once (default message delivery type for kafka)
+      - producer can send the same message more than once. if the message fails or not acknowledged then producer can send again.
+      - its consumer reponsibility to remove the duplicates
+-> at most Once
+      - producer may send message once and never retry. if it fails then producer will not resend the message again.
+-> exactly Once
+      - even if producer send the message more than once, consumer will receive the message only once.
+
+- Schema represent what format producer produce the message and what format consumer consumes it.
+
+Topics & Partitions & Replicas:
+==================================
+
+- message are stored in topics.
+- topics divided into partitions & each partition replicated across brokers based on replication factor.
+- The messages in the partitions are each assigned a sequential id number called the "offset" that uniquely identifies each record within the partition.
+- out of all replicas of partitions, one will be the leader partition which servers all read and write request.
+- Leader partition is responsible for keeping data in sync on the replicas.
+- if leader partition broker went down, then one of the replicas will become leader and servers read and write request
+- Each partition will be on different broker
+
+partition 0  [0,1,2,3,4,5,6,7] <- offsets
+partition 1  [0,1,2,3,4,5,6,7]  <- new messages will add at the end.
+partition 2  [0,1,2,3,4,5,6,7]
+
+- By default message kept for one week.
+- Once message is published it cannot be changed. Topic are immutable list of messages.
+- its randomly assigned to the partitions unless key is provided.
+
+- Replicas provide guaranteed availability of data.
+- if we have replication factor of 3, then 3 copies of each partition spread across brokers.
+- Replicas also have offset similar to partition
+- replication factor should be less than total number of brokers.
+- topics can be configured by using kafka-topics or kafka-configs in cli. use --config to pass the configs.qqqq
+- all topics configs are broker wide default.
+
+---> create topic called test3 with three partition and replication factor as 2. we have totally 3 brokers.
+---> Cmd:  ./bin/kafka-topics.sh --zookeeper localhost:2181 --describe --topic test3
+
+Topic: test3	PartitionCount: 3	ReplicationFactor: 1	Configs:
+Topic: test3	Partition: 0	Leader: 1	Replicas: 1,2	Isr: 1,2
+Topic: test3	Partition: 1	Leader: 2	Replicas: 2,3	Isr: 2,3
+Topic: test3	Partition: 2	Leader: 3	Replicas: 3,1	Isr: 3,1
+
+--> totally we have three partition, that why three records
+--> leader:1 means for this partition(partition 0) leader is broker 1.
+--> Replicas: 1,2 means data for this partition is replication in broker id 1,2. 1,2 refers the broker id.
+--> Isr(In-sync replicas): 1,2 means replicas 1,2 are in-sync with leader partition
+
+
+
+
+Producers & Consumers:
+========================
+
+- Consumer subscribes to one or more topic and read the message in the order in which it produced.
+
+-> Producer is responsible for determining which partition to write the message.
+-> Default it goes with round robin.
+
+-> Acks: producer can choose whether to receive confimation of message by setting 'acks'
+-> Key: producer will specify the key so that all message with same key will go same Partitions
+-> consumer group: to ensure consumers are not reading the same messages.
+-> consumer cannot consume until data gets replicated.
+-> messages will not be deleted after consumption. it will be deleted only based on retention period.
+-> if we have multiple consumer to the topic and all of them in same consumer group,
+      once consumer reads the message, it will just increment the offset so that it cannot read the same message.
+      each partition will be assigned to one consumer in that group. so that they can read in parallel.
+      if we have more consumers than partition, then some consumers will be in idle and will not process any messages.
+-> if two consumer consumes the same topic but in different consumer group, then both consumer will receive all the messages.
+
+Brokers & Clusters:
+====================
+
+- each broker assigns with unique id.
+- when there are multiple broker in the cluster, one will be the master/controller.
+- zookeeper is responsible for selecting new leader if controller broker failed.
+- master broker will be responsible for selecting the leader for the partition.
+- broker receives the messages from the producer, assigns offset and stores in disk.
+- broker will also replicate the data in cluster for fault tolerance.
+- after data replication, one of the partition will be the leader that serves the request.
+
+
+
+
+- Broker Configuration Changes
+
+  #set to false in production. set this false in production. if topic not available , it will create and publish message
+  auto.create.topics.enable=true
+  #this number will always be broker 1, if replaced, keep 1
+  broker.id=1
+  #I would set to false, but up to you
+  delete.topic.enable=true
+  #at least 2 to prevent data loss if broker goes down
+  default.replication.factor=3
+  #depending on the size of disk, may need to descrease this
+  log.retention.hours=168
+  #set to 2, meaning 2 copies of your data on separate nodes
+  min.insync.replicas=2
+  # at least 3 for three broker, to spread messages across brokers
+  q3num.partitions=7
+
+- if one broker fails, consumer can still consumer the message from other partition.
+- broker config can be changed dynamically.
+- read-only -> config require a broker restart in order to get udpated.
+- per-broker -> dynamically updated for each individual broker.
+- cluster-wide -> config can be updated per-broker but cluster-wide default can also be updated dynamically.
+- all topic configuration are broker-wide default.
+
+List the current configurations for broker 1.
+  kafka-configs --bootstrap-server localhost:9092 --entity-type brokers --entity-name 1 --describe
+Modify the configuration for broker 1 by setting log.cleaner.threads to 2.
+  kafka-configs --bootstrap-server localhost:9092 --entity-type brokers --entity-name 1 --alter --add-config log.cleaner.threads=2
+List the configurations for broker 1 to see the newly added configuration.
+  kafka-configs --bootstrap-server localhost:9092 --entity-type brokers --entity-name 1 --describe
+
+Zookeeper:
+===========
+
+- Data In-sync
+- Leader Election
+- Separate install
+- must be an odd number
+- co-ordinates communication throughout the cluster
+- Zookeeper can be installed on different machine and kafka can be installed in different machine.
+
+Handling request:
+==================
+
+Two types of request:
+  - produce request
+  - fetch request
+
+Request flow:
+Producer/Consumer ------> Acceptor Thread --> Processor Thread -----> IO Thread ------> Producer/Consumerq
+
+Acceptor Thread -> create connection from client to broker.
+Processor Thread -> get the request from Acceptor thread and place the request to the queue.
+IO thread -> process the request and prepared it to be consumed.
+Request queue -> request waiting to be processed by IO Thread
+Response queue -> after processing the request waiting for it to be consumer by client(consumer)

@@ -1,0 +1,74 @@
+-> Kafka streams allows us to build application that process kafka data in real time with ease.
+-> Kafka stream application take input from the topic , transform the data and output the same to another topic.
+
+Two types of transformation in streams:
+  - stateless transformation:
+     -> does not require any additional storage to manage the state.
+     -> process one record at a time.
+  - stateful transformation:
+     -> require a state store to manage the state.
+     -> stores information of previous record.
+
+
+Stateless transformation:
+==========================
+
+Branch
+  - splits streams into multiple Streams
+Filter
+  - remove message from the streams based on condition.
+FlatMap
+  - take input records and turns them into different set of records.
+Foreach
+  - perform arbitary stateless operation on each record. this is terminal operation and stops further processing. we cannot add any other steps after this.
+GroupBy/GroupByKey
+  - groups records by key. this is required for stateful transformation.
+Map
+  - allow to read the record and produce new record or altered record.
+Merge
+  - merge two streams into one Stream
+Peek
+  - similar to foreach but does not stop processing.
+
+Aggregation:
+==============
+ - Aggregation are stateful transformation that always operate on these groups of records sharing the same key.
+
+Aggregate:
+  - generates new record from a calculation involving the grouped records.
+Count
+  - count number of records of each grouped key.
+reduce
+  - combined grouped record into single record.
+
+
+Joins:
+========
+-> used to combine streams into one stream.
+-> When joining streams, data must be co-partitioned:
+     - same number of partition on input topics.
+     - same partitioning strategies for producers.
+-> we can avoid co-partitioning by using GlobalKTable which will populate the local table with data from all partitions.
+
+Join Types:
+  - inner
+  - left
+  - outer
+
+Windowing:
+==========
+- Windows are similar to groups in that they deal with set of records with same key. however windows further subdivides groups into time buckets.
+-Tumbling time windows:
+   - windows are based on time periods that never overlaps or have gaps between them.
+- Hopping time windows:
+   - time-based, can have overlaps or gaps between between them.
+- Sliding time windows:
+   - this is dynamic based on the timestamps of records rather than a fixed point in time. they are only used in joins.
+- Session Windows:
+   - creates windows based on periods of activity. group of records with same timestamps will form a session window.
+
+
+Late Arriving Records:
+  - when records falls into a time window received after the end of that window's grace period, they are known as late arriving Records
+  - we can specify the retention period. kafka will retain old bucket window so that late arriving records will still be processed.
+  - records arrive after retention period will not be processed.

@@ -13,6 +13,38 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.7.0</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+      </plugin>
+
+        <plugin>
+            <groupId>com.commercehub.gradle.plugin.avro</groupId>
+            <artifactId>com.commercehub.gradle.plugin.avro.gradle.plugin</artifactId>
+            <version>0.9.1</version>
+        </plugin>
+    </plugins>
+  </build>
+<repositories>
+
+    <repository>
+        <id>confluent</id>
+        <url>http://packages.confluent.io/maven/</url>
+    </repository>
+
+    <repository>
+        <id>avro</id>
+        <url>https://plugins.gradle.org/m2/</url>
+    </repository>
+
+</repositories>
 
   <dependencies>
     <dependency>
@@ -25,9 +57,38 @@
 <dependency>
     <groupId>org.apache.kafka</groupId>
     <artifactId>kafka-clients</artifactId>
-    <version>0.11.0.0</version>
+    <version>2.2.1</version>
     <scope>compile</scope>
 </dependency>
+    <!-- https://mvnrepository.com/artifact/org.apache.kafka/kafka-streams -->
+    <dependency>
+      <groupId>org.apache.kafka</groupId>
+      <artifactId>kafka-streams</artifactId>
+      <version>2.2.1</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/io.confluent/kafka-avro-serializer -->
+    <dependency>
+      <groupId>io.confluent</groupId>
+      <artifactId>kafka-avro-serializer</artifactId>
+      <version>5.3.0</version>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.apache.avro/avro -->
+    <dependency>
+      <groupId>org.apache.avro</groupId>
+      <artifactId>avro</artifactId>
+      <version>1.10.1</version>
+    </dependency>
+
+      <!-- https://mvnrepository.com/artifact/com.commercehub.gradle.plugin.avro/com.commercehub.gradle.plugin.avro.gradle.plugin -->
+      <dependency>
+          <groupId>com.commercehub.gradle.plugin.avro</groupId>
+          <artifactId>com.commercehub.gradle.plugin.avro.gradle.plugin</artifactId>
+          <version>0.9.1</version>
+          <type>pom</type>
+      </dependency>
+
+
 
 
   </dependencies>

@@ -1,0 +1,11 @@
+-> kafka maintains set of client libraries for java
+-> Include these libraries in your application to interact with kafka.
+
+Types of API:
+==============
+
+-> Producer API : allow you to build producers
+-> Consumer API : allow you to build Consumers
+-> Streams API  : allow you to read from input topics, transform data and output to output topics.
+-> Connect API  : allow you to build custom connectors which pull from or push to external system.
+-> AdminClient API: manage and inspect higher level objects like topics and brokers.

@@ -1,0 +1,44 @@
+Schema Registry:
+----------------
+
+- so far we have seen message with key and value as string type.
+- if we want to use complete data type, then we have to use schema registry.
+- Schema Registry is a versioned , distributed storage for apache avro schemas.
+- schema define an expected format for your data and can be used to serialize and deserialize complex data formats when interacting with kafka.
+- avro schemas allow producer to specify a complex format for published data.
+- consumer can use this schema to interpret the data.
+- both commmunicates with the schema registry to store and retrieve these schemas.
+- Schemas can be applied to both key and values.
+
+
+Creating an Avro Schema:
+--------------------------
+
+- create the schema definition file.
+
+Person.avsc
+
+{
+  "namespace": "com.linuxacademy.ccdak.schemaregistry",
+  "type": "record",
+  "name": "Person",
+  "fields": [
+    {"name": "id", "type": "int"},
+    {"name": "first_name", "type": "string"},
+    {"name": "last_name", "type": "string"},
+    {"name": "email", "type": "string"}
+  ]
+}
+
+
+- if there is change in avro schema, kafka supports compatibility.
+- select the compatibility types
+- compatibility types enfore rules on schema like what kind of changes are allowed in schema etc.,
+- compatibility types:
+   - backward: its default type. consumers using an updated schema can read the data that was serialized via current schema in the registry.
+   - backward_transitive: consumer using an updated schema can read the data that was serialized via all previously registered schema.
+   - forward: consumers using the current schema in the registry can read data serialized via the updated schema.
+   - forward_transitive: consumers using any previous schema in the registry can read data serialized via the update schema.
+
+Schema Registry with Producer:
+-------------------------------

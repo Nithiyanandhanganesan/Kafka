@@ -1,0 +1,17 @@
+Points to consider while designing the topic:
+- design topic based on use cases for maximum performance.
+- Two main consideration are :
+  - Partitions
+  - ReplicationFactor
+
+- number of brokers limit the number of replicas.
+- higher replication factor means greater fault tolerance.
+- how many consumer to place in a consumer group for parallel processing. here we need to have as many as partition as the
+  number of consumer in the consumer group.
+- how much memory available on each broker. kafka requires memory to process the messages. replica.fetch.max.bytes (Default 1MB) determines
+  rough amount of memory you will need for each partition on a broker.
+
+Metrics & Monitoring:
+=====================
+- both kafka and zookeeper offers metrics through JMX.
+- we can access metrics from kafka brokers as well as kafka client.

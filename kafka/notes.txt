@@ -1,4 +1,4 @@
-Apache Kafka™ is a distributed streaming platform.
+Apache Kafkaï¿½ is a distributed streaming platform.
 
 It lets you publish and subscribe to streams of records. In this respect it is similar to a message queue or enterprise messaging system.
 It lets you store streams of records in a fault-tolerant way.
@@ -16,14 +16,14 @@ Topics and Logs:
 
 A topic is a category or feed name to which records are published. Topics in Kafka are always multi-subscriber.
 
-Each partition is an ordered, immutable sequence of records that is continually appended to—a structured commit log. 
+Each partition is an ordered, immutable sequence of records that is continually appended to a structured commit log.
 The records in the partitions are each assigned a sequential id number called the offset that uniquely identifies each record within the partition.
 
 partition 0  [0,1,2,3,4,5,6,7] <- offsets
 partition 1  [0,1,2,3,4,5,6,7]
 partition 2  [0,1,2,3,4,5,6,7]
 
-The Kafka cluster retains all published records—whether or not they have been consumed—using a configurable retention period.
+The Kafka cluster retains all published records whether or not they have been consumed using a configurable retention period.
 offset is controlled by the consumer.
 consumer can reset to an older offset to reprocess data from the past or skip ahead to the most recent record and start consuming from "now".
 
@@ -32,7 +32,7 @@ Partitions:
 
 The partitions in the log serve several purposes. First, they allow the log to scale beyond a size that will fit on a single server. 
 Each individual partition must fit on the servers that host it, but a topic may have many partitions so it can handle an arbitrary amount of data. 
-Second they act as the unit of parallelism—more on that in a bit.
+Second they act as the unit of parallelismï¿½more on that in a bit.
 
 Each partition has one server which acts as the "leader" and zero or more servers which act as "followers". 
 The leader handles all read and write requests for the partition while the followers passively replicate the leader. 
