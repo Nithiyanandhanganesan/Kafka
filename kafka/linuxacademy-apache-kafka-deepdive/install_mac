@@ -38,3 +38,10 @@ Kafka also has a command line consumer that will dump out messages to standard o
  ./bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test --from-beginning
 my first message
 my second message
+
+
+7. Start kafka consumer group and listen to the topic
+
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group my-group --reset-offsets --to-earliest --all-topics --execute
+
+./bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test --group my-group

@@ -19,15 +19,15 @@ public class KafkaSchemaRegistryProducer {
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
         props.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, "http://localhost:8081");
 
-        KafkaProducer<String, Person> producer = new KafkaProducer<String, Person>(props);
+    //    KafkaProducer<String, Person> producer = new KafkaProducer<String, Person>(props);
 
-        Person kenny = new Person(125745, "Kenny", "Armstrong", "kenny@linuxacademy.com");
-        producer.send(new ProducerRecord<String, Person>("employees", kenny.getId().toString(), kenny));
+    //    Person kenny = new Person(125745, "Kenny", "Armstrong", "kenny@linuxacademy.com");
+    //    producer.send(new ProducerRecord<String, Person>("employees", kenny.getId().toString(), kenny));
 
-        Person terry = new Person(943256, "Terry", "Cox", "terry@linuxacademy.com");
-        producer.send(new ProducerRecord<String, Person>("employees", terry.getId().toString(), terry));
-
-        producer.close();
+    //    Person terry = new Person(943256, "Terry", "Cox", "terry@linuxacademy.com");
+    //    producer.send(new ProducerRecord<String, Person>("employees", terry.getId().toString(), terry));
+//
+     //   producer.close();
     }
 
 }

@@ -12,8 +12,10 @@ public class SimpleConsume {
     public static void main(String[] args) {
         Properties props = new Properties();
         props.setProperty("bootstrap.servers", "localhost:9092");
-        props.setProperty("group.id", "group1");
+        props.setProperty("group.id", "group4");
         props.setProperty("enable.auto.commit", "false");
+        props.setProperty("auto.offset.reset","earliest");
+        //props.setProperty("auto.offset.reset","latest");
         props.setProperty("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         props.setProperty("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
